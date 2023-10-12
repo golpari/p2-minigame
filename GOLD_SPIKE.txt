@@ -1,0 +1,2 @@
+goldspike mechanic: Change background color of the map in order to reveal other elements of the level and solve your way out of the room.
+The goal of the game/new mechanic is to strategically change the background color in a way that reveals the puzzle to you.
