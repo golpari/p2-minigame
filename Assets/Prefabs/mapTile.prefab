@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1703812350944782619}
   - component: {fileID: 5451596169603889603}
   - component: {fileID: 2469948787867767924}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: mapTile
   m_TagString: Ground
   m_Icon: {fileID: 0}
