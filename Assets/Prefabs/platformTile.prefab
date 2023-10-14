@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1703812350944782619}
   - component: {fileID: 5451596169603889603}
   - component: {fileID: 2469948787867767924}
+  - component: {fileID: 8045895881871436290}
   m_Layer: 3
   m_Name: platformTile
   m_TagString: Ground
@@ -130,3 +131,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &8045895881871436290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5393768512310539097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815e3cb2f9e9bdb43a5c044e9ce4e2c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  direction: 0
+  speed: 1
+  distance: 10
