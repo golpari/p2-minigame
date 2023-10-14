@@ -19,6 +19,10 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        if (instance == null)
+        {
+            instance = this;
+        }
     }
 
     private void FixedUpdate()
@@ -26,7 +30,10 @@ public class PlayerMovement : MonoBehaviour
         Vector2 newVelocity = rb.velocity;
 
         // Horizontal
-        newVelocity.x = Input.GetAxis("Horizontal") * moveSpeed;
+        if (IsGrounded())
+            newVelocity.x = Input.GetAxis("Horizontal") * moveSpeed;
+        else
+            newVelocity.x = Input.GetAxis("Horizontal") * moveSpeed / 2;
 
         rb.velocity = newVelocity;
 
@@ -42,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
         // Vertical (jumping)
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() && !justJumped)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+            rb.velocity = new Vector2(rb.velocity.x/2, jumpPower);
             justJumped = true;
         }
     }
