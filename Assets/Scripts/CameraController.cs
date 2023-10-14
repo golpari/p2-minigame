@@ -24,8 +24,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        if (PlayerMovement.instance.controlsFrozen)
-            return;
+     //   if (PlayerMovement.instance.controlsFrozen)
+         //   return;
 
         /*// Test trigger (use any condition you want to start the transition)
         if (Input.GetKeyDown(KeyCode.T)) // For instance, press 'T' to start transition to the right
@@ -44,7 +44,7 @@ public class CameraController : MonoBehaviour
     public IEnumerator CameraTransitionCoroutine(string direction)
     {
         // Freeze player controls
-        PlayerMovement.instance.controlsFrozen = true;
+       // PlayerMovement.instance.controlsFrozen = true;
 
         // Fade to black
         for (float t = 0; t < fadeDuration; t += Time.deltaTime)
@@ -76,7 +76,7 @@ public class CameraController : MonoBehaviour
         moveDistance = 11;
 
         // Unfreeze player controls
-        PlayerMovement.instance.controlsFrozen = false;
+       // PlayerMovement.instance.controlsFrozen = false;
     }
 
     private void OnGUI()

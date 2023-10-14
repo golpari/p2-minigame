@@ -27,13 +27,13 @@ public class Restart : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            PlayerMovement.instance.controlsFrozen = true;
+            //PlayerMovement.instance.controlsFrozen = true;
             mainCamera.backgroundColor = Color.white;
             CameraController.instance.moveDistance = -22;
             CameraController.instance.move = true;
 
             player.transform.position = new Vector3(-4, 0, 0);
-            PlayerMovement.instance.controlsFrozen = false;
+            //PlayerMovement.instance.controlsFrozen = false;
         }
         
     }

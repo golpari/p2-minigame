@@ -4,67 +4,60 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;       // Movement speed
-    public float jumpForce = 5f;       // Jumping force
+    private Rigidbody2D rb;
+    public float moveSpeed = 5;
+    public float jumpPower = 10;
 
-    private bool isJumping = false;    // To check if player is already jumping
-    [HideInInspector] public bool controlsFrozen = false;
     public static PlayerMovement instance;
 
-    private Rigidbody2D rb;
+    public bool controlsFrozen = false;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        if (instance == null)
-        {
-            instance = this;
-        }
     }
 
     private void Update()
     {
-        if (!controlsFrozen)
-        {
-            // Left or right movement
-            float moveX = Input.GetAxisRaw("Horizontal"); // -1 for left, 1 for right, 0 for idle
-            rb.velocity = new Vector2(moveX * moveSpeed, rb.velocity.y);
+        Vector3 newVelocity = rb.velocity;
 
-            // Jump
-            if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
-            {
-                rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
-                isJumping = true;
-            }
+        //Horizontal
+        newVelocity.x = Input.GetAxis("Horizontal") * moveSpeed;
+
+        //Vertical (jumping)
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        {
+            newVelocity.y = jumpPower;
         }
+
+        rb.velocity = newVelocity;
     }
 
-    // Detecting ground using OnCollisionEnter2D and OnCollisionExit2D
-    private void OnCollisionEnter2D(Collision2D collision)
+    bool IsGrounded()
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isJumping = false;
-        }
-    }
+        //use any available collider in the children (this will be different for Standing)
+        Collider2D col = this.GetComponentInChildren<Collider2D>();
 
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isJumping = false;
-        }
-        else
-            isJumping = true;
-    }
+        if (col == null)
+            return false;
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isJumping = true;
-        }
+        // Ray (actually just a direction) from the center of the collider down
+        Vector2 direction = Vector2.down;
+
+        // A bit smaller than the actual radius so it doesn't catch on walls
+        float radius = col.bounds.extents.x - .05f;
+
+        // A bit below the bottom
+        float distance = col.bounds.extents.y + .05f;
+
+        // Perform a CircleCast
+        RaycastHit2D hit = Physics2D.CircleCast(col.bounds.center, radius, direction, distance);
+
+        // If it hits something then return true
+        if (hit.collider != null)
+            return true;
+
+        return false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
