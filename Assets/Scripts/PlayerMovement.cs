@@ -5,11 +5,15 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
+    private bool justJumped = false;
+
     public float moveSpeed = 5;
     public float jumpPower = 10;
 
-    public static PlayerMovement instance;
+    [Header("Ground Check Settings")]
+    [SerializeField] private LayerMask groundLayerMask;
 
+    public static PlayerMovement instance;
     public bool controlsFrozen = false;
 
     private void Awake()
@@ -17,20 +21,30 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        Vector3 newVelocity = rb.velocity;
+        Vector2 newVelocity = rb.velocity;
 
-        //Horizontal
+        // Horizontal
         newVelocity.x = Input.GetAxis("Horizontal") * moveSpeed;
 
-        //Vertical (jumping)
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
-        {
-            newVelocity.y = jumpPower;
-        }
-
         rb.velocity = newVelocity;
+
+        // Reset the justJumped flag if grounded
+        if (IsGrounded())
+        {
+            justJumped = false;
+        }
+    }
+
+    private void Update()
+    {
+        // Vertical (jumping)
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() && !justJumped)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+            justJumped = true;
+        }
     }
 
     bool IsGrounded()
@@ -51,13 +65,32 @@ public class PlayerMovement : MonoBehaviour
         float distance = col.bounds.extents.y + .05f;
 
         // Perform a CircleCast
-        RaycastHit2D hit = Physics2D.CircleCast(col.bounds.center, radius, direction, distance);
+        RaycastHit2D hit = Physics2D.CircleCast(col.bounds.center, radius, direction, distance, groundLayerMask);
+
+        // Visualization: Draw the CircleCast as a line with circles at the start and end
+        Debug.DrawLine(col.bounds.center, col.bounds.center + (Vector3)direction * distance, Color.red);
+        DebugDrawCircle(col.bounds.center, radius, Color.red);
+        DebugDrawCircle(col.bounds.center + (Vector3)direction * distance, radius, Color.red);
 
         // If it hits something then return true
         if (hit.collider != null)
             return true;
 
         return false;
+    }
+
+    // Helper function to draw a circle using Debug.DrawLine()
+    void DebugDrawCircle(Vector3 position, float radius, Color color)
+    {
+        int segments = 20; // Adjust as needed for more or less detail
+        Vector3 prevPos = position + new Vector3(radius, 0, 0);
+        for (int i = 0; i < segments + 1; i++)
+        {
+            float angle = (float)i / (float)segments * 360 * Mathf.Deg2Rad;
+            Vector3 newPos = position + new Vector3(radius * Mathf.Cos(angle), radius * Mathf.Sin(angle), 0);
+            Debug.DrawLine(prevPos, newPos, color);
+            prevPos = newPos;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -346,6 +346,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: mapTile (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5393768512310539097, guid: 457282f43de5ac647979065af934e7ab, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2767,7 +2771,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpPower: 3
+  jumpPower: 4.75
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
   controlsFrozen: 0
 --- !u!1001 &1369480059
 PrefabInstance:
