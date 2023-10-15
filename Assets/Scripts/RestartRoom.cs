@@ -34,11 +34,7 @@ public class RestartRoom : MonoBehaviour
     void _OnDeathUpdated(DeathEvent e)
     {
         //move player back to given position when it has died and play the black screen
-        StartCoroutine(CameraFadeAndPlayerResetCoroutine());
-
-        // tell everyone that the player has respawned
-        EventBus.Publish<RespawnEvent>(new RespawnEvent(false));
-
+        StartCoroutine(CameraFadeAndPlayerResetCoroutine());   
     }
 
     private void OnDestroy()
@@ -93,8 +89,14 @@ public class RestartRoom : MonoBehaviour
             yield return null;
         }
 
+        //wait just half a second so player doesnt start immediately moving
+        yield return new WaitForSeconds(0.5f);
+
         // Unfreeze player controls
         PlayerMovement.instance.controlsFrozen = false;
+
+        // tell everyone that the player has respawned only after it has been moved from the spikes
+        EventBus.Publish<RespawnEvent>(new RespawnEvent(false));
     }
 
     private void OnGUI()
