@@ -31,7 +31,7 @@ public class KillPlayer : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Player") && !isDead)
+        if (other.gameObject.CompareTag("Spike") && !isDead)
         {
             totalDeaths++;
             isDead = true;
@@ -48,6 +48,6 @@ public class DeathEvent
 
     public override string ToString()
     {
-        return "Deaths: " + deathCount;
+        return "DEATHS: " + deathCount;
     }
 }
