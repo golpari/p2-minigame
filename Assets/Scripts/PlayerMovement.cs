@@ -100,11 +100,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    /*private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Arrow")) // For instance, press 'T' to start transition to the right
         {
             CameraController.instance.move = true;
         }
-    }
+    }*/
 }

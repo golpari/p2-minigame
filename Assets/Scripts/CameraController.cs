@@ -2,43 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/* 
+ * ASSIGN THIS SCRIPT TO THE CAMERA.
+ * WHEN A ROOM CHANGE EVENT IS TRIGGERED
+ * THE CAMERA WILL PAN AND THE PLAYER WILL BE TELEPORTED
+ */
+
 public class CameraController : MonoBehaviour
 {
     public GameObject player; // Assign your player game object in the inspector
     public float fadeDuration = 1f;
     public float waitDuration = 1f;
-    public float moveDistance = 5f; // Distance to move the camera
-
-    [HideInInspector] public bool move = false;
-    public static CameraController instance;
+    public float moveDistance = 11f; // Distance to move the camera
 
     private float alphaFadeValue = 0;
+    
+    Subscription<NextRoomEvent> nextRoom_event_subscription;
 
-    private void Awake()
+    void Start()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
+        nextRoom_event_subscription = EventBus.Subscribe<NextRoomEvent>(_OnRoomEvent);
     }
 
     private void Update()
     {
-        if (PlayerMovement.instance.controlsFrozen)
-            return;
+     
+            
+    }
 
-        /*// Test trigger (use any condition you want to start the transition)
-        if (Input.GetKeyDown(KeyCode.T)) // For instance, press 'T' to start transition to the right
-        {
-            StartCoroutine(CameraTransitionCoroutine("right"));
-        }
-        if (Input.GetKeyDown(KeyCode.Y)) // Press 'Y' to start transition to the left
-        {
-            StartCoroutine(CameraTransitionCoroutine("left"));
-        }*/
+    void _OnRoomEvent(NextRoomEvent e)
+    {
+        StartCoroutine(CameraTransitionCoroutine("right"));
+    }
 
-        if (move)
-            StartCoroutine(CameraTransitionCoroutine("right"));
+    private void OnDestroy()
+    {
+        EventBus.Unsubscribe(nextRoom_event_subscription);
     }
 
     public IEnumerator CameraTransitionCoroutine(string direction)
@@ -72,9 +71,6 @@ public class CameraController : MonoBehaviour
             yield return null;
         }
 
-        move = false;
-        moveDistance = 11;
-
         // Unfreeze player controls
         PlayerMovement.instance.controlsFrozen = false;
     }
@@ -86,4 +82,3 @@ public class CameraController : MonoBehaviour
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
     }
 }
-

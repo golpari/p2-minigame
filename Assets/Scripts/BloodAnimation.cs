@@ -7,6 +7,8 @@ public class BloodAnimation : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public Sprite[] sprites;
 
+    Subscription<DeathEvent> death_event_subscription;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -16,14 +18,20 @@ public class BloodAnimation : MonoBehaviour
             return;
         }
 
-        // ON DEATH EVENT: bloodsplatter
-        StartCoroutine(BloodSplatter());
+        //RegisterEvent
+        death_event_subscription = EventBus.Subscribe<DeathEvent>(_OnDeathEvent);
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    // DO THE BLOODSPLATTER WHEN THE DEATH EVENT IS TRIGGERED
+    void _OnDeathEvent(DeathEvent e)
+    {
+        StartCoroutine(BloodSplatter());
     }
 
     public IEnumerator BloodSplatter()
@@ -45,5 +53,10 @@ public class BloodAnimation : MonoBehaviour
 
             spriteRenderer.sprite = null;
         }
+    }
+
+    private void OnDestroy()
+    {
+        EventBus.Unsubscribe(death_event_subscription);
     }
 }
