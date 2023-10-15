@@ -11,13 +11,13 @@ public class NextRoom : MonoBehaviour
     private static int currentRoom = 0;
     public static NextRoom instance;
 
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             currentRoom++;
             EventBus.Publish<NextRoomEvent>(new NextRoomEvent(currentRoom));
-            Camera.main.backgroundColor = Color.white; //reset bg color
         }
 
     }

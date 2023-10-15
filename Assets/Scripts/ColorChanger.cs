@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class BackgroundColorChanger : MonoBehaviour
 {
+    public AudioClip paintAudio;
     public Color newBackgroundColor = Color.blue;  // Default color is blue, but you can change this in the Inspector
 
     private Camera mainCamera;
@@ -30,6 +31,9 @@ public class BackgroundColorChanger : MonoBehaviour
         if (other.CompareTag("Player") && mainCamera != null)
         {
             mainCamera.backgroundColor = newBackgroundColor;
+            // Play sound effect at the location of the main camera
+            if (paintAudio != null)
+                AudioSource.PlayClipAtPoint(paintAudio, Camera.main.transform.position);
         }
     }
 }

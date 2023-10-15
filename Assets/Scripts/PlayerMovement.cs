@@ -4,23 +4,34 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public AudioClip jumpAudio;
+
     public enum MovementStatus
     {
         standing,
-        walking,
+        walkingLeft,
+        walkingRight,
         jumping
     }
 
+    [Header("Sprite/Animation Settings")]
     public float pulseDuration = 1f;  // Duration for one full pulse (shrink and unshrink)
-    public float shrinkFactor = 0.02f;   // How much you want to shrink the player's height
+    public float shrinkFactor = 0.9f;   // How much you want to shrink the player's height
+    private Sprite originalSprite;
+    public Sprite movingSprite;
+    public float swapDuration = 1.0f;  // Duration to wait before swapping sprites
+    public float tiltAmount = 3f; // in degrees
+
+    private bool forward = false;
+    private SpriteRenderer spriteRenderer;
     private Vector3 originalScale;
     private Vector3 shrunkenScale;
     private float timer = 0.0f;
 
-
     private Rigidbody2D rb;
     private bool justJumped = false;
 
+    [Header("Movement Settings")]
     public float moveSpeed = 5;
     public float jumpPower = 10;
 
@@ -45,7 +56,13 @@ public class PlayerMovement : MonoBehaviour
     {
         originalScale = transform.localScale;
         shrunkenScale = new Vector3(originalScale.x, originalScale.y * shrinkFactor, originalScale.z);
-        StartCoroutine(PlayerAnimations());
+        Transform standingChild = transform.Find("Standing");
+        if (standingChild)
+        {
+            spriteRenderer = standingChild.GetComponent<SpriteRenderer>();
+        }
+        originalSprite = spriteRenderer.sprite; // Start with the first sprite
+        //spriteRenderer.transform.Rotate(0, 0, -tiltAmount); // start with slight neg tilt
     }
 
     private void FixedUpdate()
@@ -58,7 +75,8 @@ public class PlayerMovement : MonoBehaviour
         else
             newVelocity.x = Input.GetAxis("Horizontal") * moveSpeed / 2;
 
-        rb.velocity = newVelocity;
+        if (!controlsFrozen)
+            rb.velocity = newVelocity;
 
         // Reset the justJumped flag if grounded
         if (IsGrounded())
@@ -72,23 +90,78 @@ public class PlayerMovement : MonoBehaviour
         {
             status = MovementStatus.standing;
         }
-        else if (rb.velocity.y != 0)
+        else if (newVelocity.y != 0)
         {
             status = MovementStatus.jumping;
         }
+        else if (newVelocity.x < 0)
+        {
+            status = MovementStatus.walkingLeft;
+        }
         else
         {
-            status = MovementStatus.walking;
+            status = MovementStatus.walkingRight;
         }
     }
 
     private void Update()
     {
-        // Vertical (jumping)
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() && !justJumped)
+        if (!controlsFrozen)
         {
-            rb.velocity = new Vector2(rb.velocity.x / 2, jumpPower);
-            justJumped = true;
+            // Vertical (jumping)
+            if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() && !justJumped)
+            {
+                rb.velocity = new Vector2(rb.velocity.x / 2, jumpPower);
+                justJumped = true;
+
+                // Play sound effect at the location of the main camera
+                if (jumpAudio != null)
+                    AudioSource.PlayClipAtPoint(jumpAudio, Camera.main.transform.position);
+            }
+        }
+        
+
+        if (status == MovementStatus.standing)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= pulseDuration)
+            {
+                // Toggle between the two sizes
+                if (transform.localScale == originalScale)
+                {
+                    SetScale(shrunkenScale);
+                }
+                else
+                {
+                    SetScale(originalScale);
+                }
+                timer = 0.0f; // Reset the timer
+            }
+        }
+        else if (status == MovementStatus.walkingLeft || status == MovementStatus.walkingRight)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= swapDuration)
+            {
+                // Toggle between the two tilt positions
+                if (forward)
+                {
+                    spriteRenderer.transform.Rotate(0, 0, tiltAmount);  // tilt forward
+                    forward = !forward;
+                }
+                else
+                {
+                    spriteRenderer.transform.Rotate(0, 0, -tiltAmount);  // tilt backward/reset
+                    forward = !forward;
+                }
+                timer = 0.0f; // Reset the timer
+            }
+        }
+        else if (status == MovementStatus.walkingRight)
+        {
+           
         }
     }
 
@@ -138,40 +211,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    IEnumerator PlayerAnimations()
-    {
-        while (true)
-        {
-            if (status == MovementStatus.standing)
-            {
-                timer += Time.deltaTime;
-
-                if (timer >= pulseDuration)
-                {
-                    // Toggle between the two sizes
-                    if (transform.localScale == originalScale)
-                    {
-                        SetScale(shrunkenScale);
-                    }
-                    else
-                    {
-                        SetScale(originalScale);
-                    }
-                    timer = 0.0f; // Reset the timer
-                }
-            }
-            else
-            {
-                transform.localScale = originalScale; // Reset to original scale if not standing
-                yield return null;
-            }
-        }
-    }
-
     private void SetScale(Vector3 newScale)
     {
         float deltaHeight = (originalScale.y - newScale.y) / 2;
-        transform.position += Vector3.up * deltaHeight;
+        transform.position += Vector3.down * deltaHeight;
         transform.localScale = newScale;
     }
 }

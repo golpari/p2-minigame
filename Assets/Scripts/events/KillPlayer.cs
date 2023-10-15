@@ -10,6 +10,7 @@ public class KillPlayer : MonoBehaviour
 {
     static int totalDeaths = 0;
     bool isDead = false;
+    public AudioClip diedAudio;
 
     Subscription<RespawnEvent> respawn_event_subscription;
 
@@ -36,6 +37,9 @@ public class KillPlayer : MonoBehaviour
             totalDeaths++;
             isDead = true;
             EventBus.Publish<DeathEvent>(new DeathEvent(totalDeaths));
+            // Play sound effect at the location of the main camera
+            if (diedAudio != null)
+                AudioSource.PlayClipAtPoint(diedAudio, Camera.main.transform.position);
         }
             
     }   

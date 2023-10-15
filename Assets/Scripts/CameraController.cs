@@ -10,6 +10,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public AudioClip roomchangeAudio;
     public GameObject player; // Assign your player game object in the inspector
     public float fadeDuration = 1f;
     public float waitDuration = 1f;
@@ -33,6 +34,9 @@ public class CameraController : MonoBehaviour
     void _OnRoomEvent(NextRoomEvent e)
     {
         StartCoroutine(CameraTransitionCoroutine("right"));
+        // Play sound effect at the location of the main camera
+        if (roomchangeAudio != null)
+            AudioSource.PlayClipAtPoint(roomchangeAudio, Camera.main.transform.position);
     }
 
     private void OnDestroy()
@@ -60,6 +64,8 @@ public class CameraController : MonoBehaviour
             transform.position -= new Vector3(moveDistance, 0, 0);
         else if (direction == "right")
             transform.position += new Vector3(moveDistance, 0, 0);
+
+        Camera.main.backgroundColor = Color.white; //reset bg color
 
         //move player over
         player.transform.position = new Vector3(player.transform.position.x + 2, player.transform.position.y, player.transform.position.z);
