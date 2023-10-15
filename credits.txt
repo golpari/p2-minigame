@@ -1,4 +1,15 @@
-Keyboard sprites used on title page are courtesy of JohnFarmer on Unity Asset Store: https://assetstore.unity.com/packages/2d/gui/keyboard-keys-mouse-sprites-225232
-Paint icons (paint bucket specifically), created by Freepik - Flaticon, and then edited: https://www.flaticon.com/free-icons/paint. 
-ChatGPT used for script-writing: SquareCamera, PlayerMovement
-Blood Splatter sprites from: https://opengameart.org/content/bloodsplatter-and-bloodsplash-animation
+Script-writing support (SquareCamera, PlayerMovement, color shifting, movement animations): ChatGPT
+
+SPRITES:
+Keyboard sprites: JohnFarmer on Unity Asset Store: https://assetstore.unity.com/packages/2d/gui/keyboard-keys-mouse-sprites-225232
+Paint icons (paint bucket specifically): created by Freepik - Flaticon, and then edited by myself: https://www.flaticon.com/free-icons/paint. 
+Blood Splatter sprites: https://opengameart.org/content/bloodsplatter-and-bloodsplash-animation
+Arrows, stickman: myself
+
+AUDIOS:
+background audio: josefpres, https://freesound.org/people/josefpres/sounds/657654/
+paint pickup audio: MATRIXXX_, https://freesound.org/people/MATRIXXX_/sounds/702806/
+jump audio: jeckkech, https://freesound.org/people/jeckkech/sounds/391670/
+level up audio: Kenneth_Cooney, https://freesound.org/people/Kenneth_Cooney/sounds/609335/
+die audio: ProjectsU012, https://freesound.org/people/ProjectsU012/sounds/333785/
+complete game audio: Mrthenoronha, https://freesound.org/people/Mrthenoronha/sounds/518308/

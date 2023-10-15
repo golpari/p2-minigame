@@ -133,5 +133,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01e140d080449114094aa359fc21ef0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paintAudio: {fileID: 8300000, guid: 300c87c7a7feac6468c1ca77106fe377, type: 3}
+  paintAudio: {fileID: 8300000, guid: 9c7ef9bc0c18f5f48b79a5657b0b9054, type: 3}
   newBackgroundColor: {r: 0, g: 0, b: 1, a: 1}
