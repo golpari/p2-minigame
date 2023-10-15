@@ -92,6 +92,7 @@ public class RestartRoom : MonoBehaviour
 
         //move player back to starting spot
         player.transform.position = respawnLocation;
+        Camera.main.backgroundColor = Color.white; //reset bg color
 
         // Fade back in
         for (float t = 0; t < fadeDuration; t += Time.deltaTime)

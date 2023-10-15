@@ -4,11 +4,27 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public enum MovementStatus
+    {
+        standing,
+        walking,
+        jumping
+    }
+
+    public float pulseDuration = 1f;  // Duration for one full pulse (shrink and unshrink)
+    public float shrinkFactor = 0.02f;   // How much you want to shrink the player's height
+    private Vector3 originalScale;
+    private Vector3 shrunkenScale;
+    private float timer = 0.0f;
+
+
     private Rigidbody2D rb;
     private bool justJumped = false;
 
     public float moveSpeed = 5;
     public float jumpPower = 10;
+
+    public MovementStatus status = MovementStatus.standing;
 
     [Header("Ground Check Settings")]
     [SerializeField] private LayerMask groundLayerMask;
@@ -23,6 +39,13 @@ public class PlayerMovement : MonoBehaviour
         {
             instance = this;
         }
+    }
+
+    private void Start()
+    {
+        originalScale = transform.localScale;
+        shrunkenScale = new Vector3(originalScale.x, originalScale.y * shrinkFactor, originalScale.z);
+        StartCoroutine(PlayerAnimations());
     }
 
     private void FixedUpdate()
@@ -42,6 +65,21 @@ public class PlayerMovement : MonoBehaviour
         {
             justJumped = false;
         }
+
+        //FOR ANIMATIONS
+        // if stickman is just standing
+        if (rb.velocity == Vector2.zero)
+        {
+            status = MovementStatus.standing;
+        }
+        else if (rb.velocity.y != 0)
+        {
+            status = MovementStatus.jumping;
+        }
+        else
+        {
+            status = MovementStatus.walking;
+        }
     }
 
     private void Update()
@@ -49,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
         // Vertical (jumping)
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() && !justJumped)
         {
-            rb.velocity = new Vector2(rb.velocity.x/2, jumpPower);
+            rb.velocity = new Vector2(rb.velocity.x / 2, jumpPower);
             justJumped = true;
         }
     }
@@ -100,11 +138,40 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    /*private void OnTriggerEnter2D(Collider2D collision)
+    IEnumerator PlayerAnimations()
     {
-        if (collision.gameObject.CompareTag("Arrow")) // For instance, press 'T' to start transition to the right
+        while (true)
         {
-            CameraController.instance.move = true;
+            if (status == MovementStatus.standing)
+            {
+                timer += Time.deltaTime;
+
+                if (timer >= pulseDuration)
+                {
+                    // Toggle between the two sizes
+                    if (transform.localScale == originalScale)
+                    {
+                        SetScale(shrunkenScale);
+                    }
+                    else
+                    {
+                        SetScale(originalScale);
+                    }
+                    timer = 0.0f; // Reset the timer
+                }
+            }
+            else
+            {
+                transform.localScale = originalScale; // Reset to original scale if not standing
+                yield return null;
+            }
         }
-    }*/
+    }
+
+    private void SetScale(Vector3 newScale)
+    {
+        float deltaHeight = (originalScale.y - newScale.y) / 2;
+        transform.position += Vector3.up * deltaHeight;
+        transform.localScale = newScale;
+    }
 }

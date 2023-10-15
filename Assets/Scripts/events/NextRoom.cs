@@ -17,6 +17,7 @@ public class NextRoom : MonoBehaviour
         {
             currentRoom++;
             EventBus.Publish<NextRoomEvent>(new NextRoomEvent(currentRoom));
+            Camera.main.backgroundColor = Color.white; //reset bg color
         }
 
     }
