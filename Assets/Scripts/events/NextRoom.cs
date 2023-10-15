@@ -8,7 +8,8 @@ using UnityEngine;
 
 public class NextRoom : MonoBehaviour
 {
-    static int currentRoom = 1;
+    private static int currentRoom = 0;
+    public static NextRoom instance;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -23,6 +24,6 @@ public class NextRoom : MonoBehaviour
 
 public class NextRoomEvent
 {
-    public int roomNumber = 1;
+    public int roomNumber = 0;
     public NextRoomEvent(int _roomNumber) { roomNumber = _roomNumber; }
 }

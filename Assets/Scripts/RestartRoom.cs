@@ -9,9 +9,12 @@ using UnityEngine;
 public class RestartRoom : MonoBehaviour
 {
     Subscription<DeathEvent> death_event_subscription;
+    Subscription<NextRoomEvent> nextRoom_event_subscription;
 
     public float fadeDuration = 1f;
     public float waitDuration = 1f;
+    public int roomNumber = 0;
+    private int roomCount = 0;
 
     public GameObject player;
     public Vector3 respawnLocation;
@@ -23,6 +26,7 @@ public class RestartRoom : MonoBehaviour
     void Start()
     {
         death_event_subscription = EventBus.Subscribe<DeathEvent>(_OnDeathUpdated);
+        nextRoom_event_subscription = EventBus.Subscribe<NextRoomEvent>(_OnRoomUpdated);
 
         mainCamera = Camera.main;  // Get the main camera (assuming this script is used in a 2D game)
         if (mainCamera == null)
@@ -31,15 +35,22 @@ public class RestartRoom : MonoBehaviour
         }
     }
 
+    void _OnRoomUpdated(NextRoomEvent e)
+    {
+        roomCount++;
+    }
     void _OnDeathUpdated(DeathEvent e)
     {
         //move player back to given position when it has died and play the black screen
-        StartCoroutine(CameraFadeAndPlayerResetCoroutine());   
+        // but only respawn in the right room
+        if (roomNumber == roomCount)
+            StartCoroutine(CameraFadeAndPlayerResetCoroutine());   
     }
 
     private void OnDestroy()
     {
         EventBus.Unsubscribe(death_event_subscription);
+        EventBus.Unsubscribe(nextRoom_event_subscription);
     }
 
     // Update is called once per frame

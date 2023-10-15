@@ -20,6 +20,7 @@ public class KillPlayer : MonoBehaviour
 
     void _OnRespawnUpdated(RespawnEvent e)
     {
+        if (!isDead) { return; }
         isDead = e.isDead;
     }
 
